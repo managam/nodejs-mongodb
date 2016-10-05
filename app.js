@@ -30,7 +30,10 @@ MongoClient.connect(url, function(err, db){
         // updateDocument(updateFrom, updateTo, db, function() {
         //     db.close();
         // });
-        removeDocument(removeDoc, db, function() {
+        // removeDocument(removeDoc, db, function() {
+        //     db.close();
+        // });
+        indexCollection(db, function() {
             db.close();
         });
     });
@@ -53,7 +56,7 @@ var insertDocuments = function(db, callback) {
         console.log("Inserted 3 documents into the collection");
         callback(result);
     });
-}
+};
 
 // Find documents
 var findDocuments = function(db, callback) {
@@ -67,7 +70,7 @@ var findDocuments = function(db, callback) {
         console.log(docs);
         callback(docs);
     });
-}
+};
 
 // Find documents with a query filter
 var findDocumentsQueryFilter = function(query, db, callback) {
@@ -81,7 +84,7 @@ var findDocumentsQueryFilter = function(query, db, callback) {
         console.log(docs);
         callback(docs);
     });
-}
+};
 
 // Update a document
 var updateDocument = function(updateFrom, updateTo, db, callback) {
@@ -95,7 +98,7 @@ var updateDocument = function(updateFrom, updateTo, db, callback) {
         console.log("Updated the document with the field:", updateFrom, "to:", updateTo);
         callback(result);
     }) ;
-}
+};
 
 // Remove a document
 var removeDocument = function(removeDoc, db, callback) {
@@ -109,4 +112,16 @@ var removeDocument = function(removeDoc, db, callback) {
         console.log("Remove doc:", removeDoc);
         callback(result);
     });
-}
+};
+
+// Index collection
+var indexCollection = function(db, callback) {
+    db.collection('documents').createIndex(
+        {'a': 1},
+        null,
+        function(err, results) {
+            console.log("Results:", results);
+            callback();
+        }
+    );
+};
