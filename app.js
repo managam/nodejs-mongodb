@@ -13,6 +13,9 @@ var updateFrom = {'a': 2};
 // Update to
 var updateTo = {'b': 3};
 
+// Remove doc
+var removeDoc = {'a': 1};
+
 // Use connect method to connect to the server
 MongoClient.connect(url, function(err, db){
     assert.equal(err, null);
@@ -24,7 +27,10 @@ MongoClient.connect(url, function(err, db){
         // findDocumentsQueryFilter(query, db, function() {
         //     db.close();
         // });
-        updateDocument(updateFrom, updateTo, db, function() {
+        // updateDocument(updateFrom, updateTo, db, function() {
+        //     db.close();
+        // });
+        removeDocument(removeDoc, db, function() {
             db.close();
         });
     });
@@ -82,11 +88,25 @@ var updateDocument = function(updateFrom, updateTo, db, callback) {
     // Get the documents collection
     var collection = db.collection('documents');
 
-    // Update document where a is 2, set b equal to 3
+    // Update document where a is var updateFrom, set var updateTo
     collection.updateOne(updateFrom, {$set: updateTo}, function(err, result) {
         assert.equal(err, null);
         assert.equal(1, result.result.n);
         console.log("Updated the document with the field:", updateFrom, "to:", updateTo);
         callback(result);
     }) ;
+}
+
+// Remove a document
+var removeDocument = function(removeDoc, db, callback) {
+    // Get the documents collection
+    var collection = db.collection('documents');
+
+    // Remove document where is var removeDoc
+    collection.deleteOne(removeDoc, function(err, result) {
+        assert.equal(err, null);
+        assert.equal(1, result.result.n);
+        console.log("Remove doc:", removeDoc);
+        callback(result);
+    });
 }
