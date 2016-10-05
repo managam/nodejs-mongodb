@@ -6,8 +6,29 @@ var url = 'mongodb://localhost:27017/nodejs-mongodb';
 
 // Use connect method to connect to the server
 MongoClient.connect(url, function(err, db){
-    assert.equal(null, err);
+    assert.equal(err, null);
     console.log("Connected successfully to server");
 
-    db.close();
+    insertDocuments(db, function(){
+        db.close();
+    })
 });
+
+// Insert documents
+var insertDocuments = function(db, callback) {
+    // Get the documents collections
+    var collection = db.collection('documents');
+
+    // Insert some documents
+    collection.insertMany([
+        {a: 1},
+        {a: 2},
+        {a: 3}
+    ], function(err, result) {
+        assert.equal(err, null);
+        assert.equal(result.result.n, 3);
+        assert.equal(result.ops.length, 3);
+        console.log("Inserted 3 documents into the collection");
+        callback(result);
+    });
+}
