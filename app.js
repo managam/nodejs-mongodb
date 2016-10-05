@@ -7,6 +7,12 @@ var url = 'mongodb://localhost:27017/nodejs-mongodb';
 // Query filter
 var query = {'a': 2};
 
+// Update from
+var updateFrom = {'a': 2};
+
+// Update to
+var updateTo = {'b': 3};
+
 // Use connect method to connect to the server
 MongoClient.connect(url, function(err, db){
     assert.equal(err, null);
@@ -15,7 +21,10 @@ MongoClient.connect(url, function(err, db){
         // findDocuments(db, function() {
         //     db.close();
         // });
-        findDocumentsQueryFilter(query, db, function(){
+        // findDocumentsQueryFilter(query, db, function() {
+        //     db.close();
+        // });
+        updateDocument(updateFrom, updateTo, db, function() {
             db.close();
         });
     });
@@ -66,4 +75,18 @@ var findDocumentsQueryFilter = function(query, db, callback) {
         console.log(docs);
         callback(docs);
     });
+}
+
+// Update a document
+var updateDocument = function(updateFrom, updateTo, db, callback) {
+    // Get the documents collection
+    var collection = db.collection('documents');
+
+    // Update document where a is 2, set b equal to 3
+    collection.updateOne(updateFrom, {$set: updateTo}, function(err, result) {
+        assert.equal(err, null);
+        assert.equal(1, result.result.n);
+        console.log("Updated the document with the field:", updateFrom, "to:", updateTo);
+        callback(result);
+    }) ;
 }
