@@ -4,14 +4,19 @@ var MongoClient = require("mongodb").MongoClient,
 // Connection URL
 var url = 'mongodb://localhost:27017/nodejs-mongodb';
 
+// Query filter
+var query = {'a': 2};
+
 // Use connect method to connect to the server
 MongoClient.connect(url, function(err, db){
     assert.equal(err, null);
     console.log("Connected successfully to server");
-
     insertDocuments(db, function() {
-        findDocuments(db, function() {
-                db.close();
+        // findDocuments(db, function() {
+        //     db.close();
+        // });
+        findDocumentsQueryFilter(query, db, function(){
+            db.close();
         });
     });
 });
@@ -44,6 +49,20 @@ var findDocuments = function(db, callback) {
     collection.find({}).toArray(function(err, docs) {
         assert.equal(err, null);
         console.log("Found the following records");
+        console.log(docs);
+        callback(docs);
+    });
+}
+
+// Find documents with a query filter
+var findDocumentsQueryFilter = function(query, db, callback) {
+    // Get the documents collection
+    var collection = db.collection('documents');
+
+    // Find documents with a query filter
+    collection.find(query).toArray(function(err, docs) {
+        assert.equal(err, null);
+        console.log("Found the following query records: ", query);
         console.log(docs);
         callback(docs);
     });
